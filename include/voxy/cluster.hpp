@@ -18,11 +18,13 @@
 namespace voxy
 {
 
-template<uint8_t SX, uint8_t SY, uint8_t SZ, typename V>
-class Cluster3
+// Side chunks including center.
+#define CHUNK_CLUSTER_SIZE 7
+
+template<class C, typename V>
+struct Cluster3
 {
-public:
-	typedef Chunk3<SX, SY, SZ, V> Chunk;
+	typedef C Chunk;
 	typedef V Voxel;
 
 	Chunk *c, *nx, *px, *ny, *py, *nz, *pz;
@@ -32,9 +34,8 @@ public:
 		Chunk* ny = nullptr, Chunk* py = nullptr,
 		Chunk* nz = nullptr, Chunk* pz = nullptr)
 	{
-		this->c = c; this->nx = nx; this->px = px; 
-		this->ny = ny; this->py = py;
-		this->nz = nz; this->pz = pz;
+		this->c = c; this->nx = nx; this->px = px; this->ny = ny;
+		this->py = py; this->nz = nz; this->pz = pz;
 	}
 
 	bool isComplete() const noexcept

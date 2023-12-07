@@ -27,7 +27,7 @@ namespace voxy
 	((z) * (sizeXY) + (y) * (sizeX) + (x))
 
 template<uint8_t SX, uint8_t SY, uint8_t SZ, typename V>
-class Chunk3
+struct Chunk3
 {
 public:
 	static constexpr uint8_t SizeX = SX;
@@ -114,7 +114,13 @@ public:
 				voxels[i] = voxel;
 		}
 	}
-	void fill(const Voxel* voxels, uint8_t sizeX, uint8_t sizeY, uint8_t sizeZ,
+
+	void copy(const Voxel* voxels) noexcept
+	{
+		assert(voxels);
+		memcpy(this->voxels, voxels, Size * sizeof(Voxel));
+	}
+	void copy(const Voxel* voxels, uint8_t sizeX, uint8_t sizeY, uint8_t sizeZ,
 		uint8_t offsetX = 0, uint8_t offsetY = 0, uint8_t offsetZ = 0) noexcept
 	{
 		assert(voxels);
@@ -122,22 +128,15 @@ public:
 		assert(sizeY + offsetY <= SY);
 		assert(sizeZ + offsetZ <= SZ);
 
-		if (sizeX == SX && sizeY == SY && sizeZ == SZ)
+		auto sizeXY = sizeX * sizeY;
+		for (uint8_t z = 0; z < sizeZ; z++)
 		{
-			memcpy(this->voxels, voxels, Size * sizeof(Voxel));
-		}
-		else
-		{
-			auto sizeXY = sizeX * sizeY;
-			for (uint8_t z = 0; z < sizeZ; z++)
+			for (uint8_t y = 0; y < sizeY; y++)
 			{
-				for (uint8_t y = 0; y < sizeY; y++)
-				{
-					memcpy(this->voxels + posToChunkIndex(
-						offsetX, offsetY + y, offsetZ + z, SX, SizeXY),
-						voxels + posToChunkIndex(0, y, z, sizeX, sizeXY),
-						sizeX * sizeof(Voxel));
-				}
+				memcpy(this->voxels + posToChunkIndex(
+					offsetX, offsetY + y, offsetZ + z, SX, SizeXY),
+					voxels + posToChunkIndex(0, y, z, sizeX, sizeXY),
+					sizeX * sizeof(Voxel));
 			}
 		}
 	}
