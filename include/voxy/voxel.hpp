@@ -13,13 +13,14 @@
 // limitations under the License.
 
 #pragma once
+#include <cstdint>
 
 namespace voxy
 {
 
-#define NULL_VOXEL 0
-#define UNKNOWN_VOXEL 1
-#define DEBUG_VOXEL 2
-#define DEFINED_VOXEL_COUNT 3
+const uint32_t nullVoxel = 0;
+const uint32_t unknownVoxel = 1;
+const uint32_t debugVoxel = 2;
+const uint32_t predefinedVoxelCount = 3;
 
 };

@@ -19,7 +19,7 @@ namespace voxy
 {
 
 // Side chunks including center.
-#define CHUNK_CLUSTER_SIZE 7
+const uint8_t chunkClusterSize = 7;
 
 template<class C, typename V>
 struct Cluster3

@@ -23,8 +23,10 @@
 namespace voxy
 {
 
-#define posToChunkIndex(x, y, z, sizeX, sizeXY) \
-	((z) * (sizeXY) + (y) * (sizeX) + (x))
+static size_t posToChunkIndex(uint8_t x, uint8_t y, uint8_t z, uint8_t sizeX, uint8_t sizeXY) noexcept
+{
+	return ((size_t)z * sizeXY + (size_t)y * sizeX + x);
+}
 
 template<uint8_t SX, uint8_t SY, uint8_t SZ, typename V>
 struct Chunk3
