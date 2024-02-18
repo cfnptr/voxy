@@ -80,26 +80,30 @@ public:
 
 	bool tryGet(uint8_t x, uint8_t y, uint8_t z, Voxel& voxel) const noexcept
 	{
-		if (x >= SX || y >= SY || z >= SZ) return false;
+		if (x >= SX || y >= SY || z >= SZ)
+			return false;
 		voxel = voxels[posToChunkIndex(x, y, z, SX, SizeXY)];
 		return true;
 	}
 	bool trySet(uint8_t x, uint8_t y, uint8_t z, Voxel voxel) noexcept
 	{
-		if (x >= SX || y >= SY || z >= SZ) return false;
+		if (x >= SX || y >= SY || z >= SZ)
+			return false;
 		voxels[posToChunkIndex(x, y, z, SX, SizeXY)] = voxel;
 		return true;
 	}
 
 	bool tryGet(size_t index, Voxel& voxel) const noexcept
 	{
-		if (index >= Size) return false;
+		if (index >= Size)
+			return false;
 		voxel = voxels[index];
 		return true;
 	}
 	bool trySet(size_t index, Voxel voxel) noexcept
 	{
-		if (index >= Size) return false;
+		if (index >= Size)
+			return false;
 		voxels[index] = voxel;
 		return true;
 	}
