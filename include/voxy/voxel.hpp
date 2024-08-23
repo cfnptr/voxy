@@ -12,15 +12,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/***********************************************************************************************************************
+ * @file
+ * @brief Voxel (block) functions.
+ */
+
 #pragma once
 #include <cstdint>
 
 namespace voxy
 {
 
+/**
+ * @brief Predefined empty (air) voxel ID.
+ */
 const uint32_t nullVoxel = 0;
+/**
+ * @brief Predefined unknown (missing) voxel ID.
+ */
 const uint32_t unknownVoxel = 1;
+/**
+ * @brief Predefined debugging voxel ID.
+ */
 const uint32_t debugVoxel = 2;
+/**
+ * @brief Predefined voxel ID count.
+ */
 const uint32_t predefinedVoxelCount = 3;
 
 };

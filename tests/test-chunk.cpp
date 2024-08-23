@@ -24,15 +24,15 @@ typedef Chunk3<16, 16, 16, uint8_t> Chunk;
 
 int main()
 {
-	Chunk chunk(NULL_VOXEL);
+	Chunk chunk(nullVoxel);
 	chunk.set(1, 2, 3, 100);
 
 	if (chunk.get(1, 2, 3) != 100)
 		throw runtime_error("Bad chunk voxel value.");
 	
-	chunk.fill(UNKNOWN_VOXEL);
+	chunk.fill(unknownVoxel);
 
-	if (chunk.get(2, 2, 2) != UNKNOWN_VOXEL)
+	if (chunk.get(2, 2, 2) != unknownVoxel)
 		throw runtime_error("Bad chunk voxel value.");
 	
 	return EXIT_SUCCESS;
