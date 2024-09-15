@@ -20,24 +20,24 @@
 #pragma once
 #include <cstdint>
 
-namespace voxy
+namespace voxy::voxel
 {
 
 /**
  * @brief Predefined empty (air) voxel ID.
  */
-const uint32_t nullVoxel = 0;
+const uint32_t null = 0;
 /**
  * @brief Predefined unknown (missing) voxel ID.
  */
-const uint32_t unknownVoxel = 1;
+const uint32_t unknown = 1;
 /**
  * @brief Predefined debugging voxel ID.
  */
-const uint32_t debugVoxel = 2;
+const uint32_t debug = 2;
 /**
  * @brief Predefined voxel ID count.
  */
-const uint32_t predefinedVoxelCount = 3;
+const uint32_t predefinedCount = 3;
 
 };
