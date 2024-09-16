@@ -30,11 +30,6 @@
 namespace voxy
 {
 
-/**
- * @brief Chunk group size around center chunk. (including center one)
- */
-const uint8_t chunkClusterSize = 7;
-
 /***********************************************************************************************************************
  * @brief Nearby chunk group container. (including center one)
  * 
@@ -61,6 +56,11 @@ struct Cluster3
 	 * @brief Chunk voxel ID type.
 	 */
 	typedef V Voxel;
+
+	/**
+	 * @brief Chunk group size around center chunk. (including center one)
+	 */
+	const uint8_t chunkSize = 7;
 
 	Chunk *c, *nx, *px, *ny, *py, *nz, *pz;
 
