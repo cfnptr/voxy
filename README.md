@@ -40,7 +40,7 @@ See the [documentation](https://cfnptr.github.io/voxy)
 git clone https://github.com/cfnptr/voxy
 ```
 
-## Building ![CI](https://github.com/cfnptr/ecsm/actions/workflows/cmake.yml/badge.svg)
+## Building ![CI](https://github.com/cfnptr/voxy/actions/workflows/cmake.yml/badge.svg)
 
 * Windows: ```./scripts/build-release.bat```
 * macOS / Ubuntu: ```./scripts/build-release.sh```

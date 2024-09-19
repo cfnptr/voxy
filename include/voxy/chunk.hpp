@@ -31,7 +31,7 @@ namespace voxy
 /**
  * @brief Calculates chunk index from chunk position and size.
  */
-static size_t posToChunkIndex(uint8_t x, uint8_t y, uint8_t z, uint8_t sizeX, uint8_t sizeXY) noexcept
+static size_t posToChunkIndex(uint8_t x, uint8_t y, uint8_t z, uint8_t sizeX, uint16_t sizeXY) noexcept
 {
 	return ((size_t)z * sizeXY + (size_t)y * sizeX + x);
 }
@@ -51,29 +51,29 @@ public:
 	/**
 	 * @brief Chunk size in voxels along X-axis.
 	 */
-	static constexpr uint8_t SizeX = SX;
+	static constexpr uint8_t sizeX = SX;
 	/**
 	 * @brief Chunk size in voxels along Y-axis.
 	 */
-	static constexpr uint8_t SizeY = SY;
+	static constexpr uint8_t sizeY = SY;
 	/**
 	 * @brief Chunk size in voxels along Z-axis.
 	 */
-	static constexpr uint8_t SizeZ = SZ;
+	static constexpr uint8_t sizeZ = SZ;
 	/**
-	 * @brief Chunk layer size in voxels. (SizeX * SizeY)
+	 * @brief Chunk layer size in voxels. (sizeX * sizeY)
 	 */
-	static constexpr size_t SizeXY = SX * SY;
+	static constexpr uint16_t sizeXY = SX * SY;
 	/**
-	 * @brief Chunk array size in voxels, or chunk volume. (SizeX * SizeY * SizeZ)
+	 * @brief Chunk array size in voxels, or chunk volume. (sizeX * sizeY * sizeZ)
 	 */
-	static constexpr size_t Size = SX * SY * SZ;
+	static constexpr size_t size = SX * SY * SZ;
 	/**
 	 * @brief Chunk voxel ID type.
 	 */
 	typedef V Voxel;
 protected:
-	Voxel voxels[Size];
+	Voxel voxels[size];
 public:
 	/**
 	 * @brief Creates a new uninitialized chunk.
@@ -108,7 +108,7 @@ public:
 		assert(x < SX);
 		assert(y < SY);
 		assert(z < SZ);
-		return voxels[posToChunkIndex(x, y, z, SX, SizeXY)];
+		return voxels[posToChunkIndex(x, y, z, SX, sizeXY)];
 	}
 	/**
 	 * @brief Sets chunk voxel at specified 3D position.
@@ -124,7 +124,7 @@ public:
 		assert(x < SX);
 		assert(y < SY);
 		assert(z < SZ);
-		voxels[posToChunkIndex(x, y, z, SX, SizeXY)] = voxel;
+		voxels[posToChunkIndex(x, y, z, SX, sizeXY)] = voxel;
 	}
 
 	/**
@@ -134,7 +134,7 @@ public:
 	 */
 	Voxel get(size_t index) const noexcept
 	{
-		assert(index < Size);
+		assert(index < size);
 		return voxels[index];
 	}
 	/**
@@ -146,7 +146,7 @@ public:
 	 */
 	void set(size_t index, Voxel voxel) noexcept
 	{
-		assert(index < Size);
+		assert(index < size);
 		voxels[index] = voxel;
 	}
 
@@ -163,7 +163,7 @@ public:
 	{
 		if (x >= SX || y >= SY || z >= SZ)
 			return false;
-		voxel = voxels[posToChunkIndex(x, y, z, SX, SizeXY)];
+		voxel = voxels[posToChunkIndex(x, y, z, SX, sizeXY)];
 		return true;
 	}
 	/**
@@ -179,7 +179,7 @@ public:
 	{
 		if (x >= SX || y >= SY || z >= SZ)
 			return false;
-		voxels[posToChunkIndex(x, y, z, SX, SizeXY)] = voxel;
+		voxels[posToChunkIndex(x, y, z, SX, sizeXY)] = voxel;
 		return true;
 	}
 
@@ -192,7 +192,7 @@ public:
 	 */
 	bool tryGet(size_t index, Voxel& voxel) const noexcept
 	{
-		if (index >= Size)
+		if (index >= size)
 			return false;
 		voxel = voxels[index];
 		return true;
@@ -206,7 +206,7 @@ public:
 	 */
 	bool trySet(size_t index, Voxel voxel) noexcept
 	{
-		if (index >= Size)
+		if (index >= size)
 			return false;
 		voxels[index] = voxel;
 		return true;
@@ -218,13 +218,13 @@ public:
 	 */
 	void fill(Voxel voxel) noexcept
 	{
-		if (voxel == NULL_VOXEL)
+		if (voxel == voxel::null)
 		{
-			memset(voxels, 0, Size * sizeof(V));
+			memset(voxels, 0, size * sizeof(V));
 		}
 		else
 		{
-			for (size_t i = 0; i < Size; i++)
+			for (size_t i = 0; i < size; i++)
 				voxels[i] = voxel;
 		}
 	}
@@ -237,37 +237,37 @@ public:
 	void copy(const Voxel* voxels) noexcept
 	{
 		assert(voxels);
-		memcpy(this->voxels, voxels, Size * sizeof(Voxel));
+		memcpy(this->voxels, voxels, size * sizeof(Voxel));
 	}
 	/**
 	 * @brief Copies voxels from specified array part to this chunk.
 	 * @note Voxel array should have bigger or the same size as specified part!
 	 * 
 	 * @param[in] target voxel array
-	 * @param sizeX voxel array part size along X-axis
-	 * @param sizeY voxel array part size along Y-axis
-	 * @param sizeZ voxel array part size along Z-axis
+	 * @param _sizeX voxel array part size along X-axis
+	 * @param _sizeY voxel array part size along Y-axis
+	 * @param _sizeZ voxel array part size along Z-axis
 	 * @param offsetX voxel array part offset along X-axis
 	 * @param offsetY voxel array part offset along Y-axis
 	 * @param offsetZ voxel array part offset along Z-axis
 	 */
-	void copy(const Voxel* voxels, uint8_t sizeX, uint8_t sizeY, uint8_t sizeZ,
+	void copy(const Voxel* voxels, uint8_t _sizeX, uint8_t _sizeY, uint8_t _sizeZ,
 		uint8_t offsetX = 0, uint8_t offsetY = 0, uint8_t offsetZ = 0) noexcept
 	{
 		assert(voxels);
-		assert(sizeX + offsetX <= SX);
-		assert(sizeY + offsetY <= SY);
-		assert(sizeZ + offsetZ <= SZ);
+		assert(_sizeX + offsetX <= SX);
+		assert(_sizeY + offsetY <= SY);
+		assert(_sizeZ + offsetZ <= SZ);
 
-		auto sizeXY = sizeX * sizeY;
-		for (uint8_t z = 0; z < sizeZ; z++)
+		auto _sizeXY = _sizeX * _sizeY;
+		for (uint8_t z = 0; z < _sizeZ; z++)
 		{
-			for (uint8_t y = 0; y < sizeY; y++)
+			for (uint8_t y = 0; y < _sizeY; y++)
 			{
 				memcpy(this->voxels + posToChunkIndex(
-					offsetX, offsetY + y, offsetZ + z, SX, SizeXY),
-					voxels + posToChunkIndex(0, y, z, sizeX, sizeXY),
-					sizeX * sizeof(Voxel));
+					offsetX, offsetY + y, offsetZ + z, SX, sizeXY),
+					voxels + posToChunkIndex(0, y, z, _sizeX, _sizeXY),
+					_sizeX * sizeof(Voxel));
 			}
 		}
 	}

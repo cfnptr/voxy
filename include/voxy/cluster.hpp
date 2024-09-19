@@ -60,7 +60,7 @@ struct Cluster3
 	/**
 	 * @brief Chunk group size around center chunk. (including center one)
 	 */
-	const uint8_t chunkSize = 7;
+	inline static const uint8_t chunkSize = 7;
 
 	Chunk *c, *nx, *px, *ny, *py, *nz, *pz;
 
@@ -102,17 +102,17 @@ struct Cluster3
 	{
 		assert(isComplete());
 		if (x < 0)
-			return nx->get(x + Chunk::SizeX, y, z);
+			return nx->get(x + Chunk::sizeX, y, z);
 		if (x >= Chunk::SizeX)
-			return px->get(x - Chunk::SizeX, y, z);
+			return px->get(x - Chunk::sizeX, y, z);
 		if (y < 0)
-			return ny->get(x, y + Chunk::SizeY, z);
+			return ny->get(x, y + Chunk::sizeY, z);
 		if (y >= Chunk::SizeY)
-			return py->get(x, y - Chunk::SizeY, z);
+			return py->get(x, y - Chunk::sizeY, z);
 		if (z < 0)
-			return nz->get(x, y, z + Chunk::SizeZ);
-		if (z >= Chunk::SizeZ)
-			return pz->get(x, y, z - Chunk::SizeZ);
+			return nz->get(x, y, z + Chunk::sizeZ);
+		if (z >= Chunk::sizeZ)
+			return pz->get(x, y, z - Chunk::sizeZ);
 		return c->get(x, y, z);
 	}
 	/**
@@ -128,17 +128,17 @@ struct Cluster3
 	{
 		assert(isComplete());
 		if (x < 0)
-			return nx->set(x + Chunk::SizeX, y, z, voxel);
-		if (x >= Chunk::SizeX)
-			return px->set(x - Chunk::SizeX, y, z, voxel);
+			return nx->set(x + Chunk::sizeX, y, z, voxel);
+		if (x >= Chunk::sizeX)
+			return px->set(x - Chunk::sizeX, y, z, voxel);
 		if (y < 0)
-			return ny->set(x, y + Chunk::SizeY, z, voxel);
-		if (y >= Chunk::SizeY)
-			return py->set(x, y - Chunk::SizeY, z, voxel);
+			return ny->set(x, y + Chunk::sizeY, z, voxel);
+		if (y >= Chunk::sizeY)
+			return py->set(x, y - Chunk::sizeY, z, voxel);
 		if (z < 0)
-			return nz->set(x, y, z + Chunk::SizeZ, voxel);
-		if (z >= Chunk::SizeZ)
-			return pz->set(x, y, z - Chunk::SizeZ, voxel);
+			return nz->set(x, y, z + Chunk::sizeZ, voxel);
+		if (z >= Chunk::sizeZ)
+			return pz->set(x, y, z - Chunk::sizeZ, voxel);
 		return c->set(x, y, z, voxel);
 	}
 
@@ -154,17 +154,17 @@ struct Cluster3
 	bool tryGet(uint16_t x, uint16_t y, uint16_t z, Voxel& voxel) const noexcept
 	{
 		if (x < 0)
-			return nx ? nx->tryGet(x + Chunk::SizeX, y, z, voxel) : false;
-		if (x >= Chunk::SizeX)
-			return px ? px->tryGet(x - Chunk::SizeX, y, z, voxel) : false;
+			return nx ? nx->tryGet(x + Chunk::sizeX, y, z, voxel) : false;
+		if (x >= Chunk::sizeX)
+			return px ? px->tryGet(x - Chunk::sizeX, y, z, voxel) : false;
 		if (y < 0)
-			return ny ? ny->tryGet(x, y + Chunk::SizeY, z, voxel) : false;
-		if (y >= Chunk::SizeY)
-			return py ? py->tryGet(x, y - Chunk::SizeY, z, voxel) : false;
+			return ny ? ny->tryGet(x, y + Chunk::sizeY, z, voxel) : false;
+		if (y >= Chunk::sizeY)
+			return py ? py->tryGet(x, y - Chunk::sizeY, z, voxel) : false;
 		if (z < 0)
-			return nz ? nz->tryGet(x, y, z + Chunk::SizeZ, voxel) : false;
-		if (z >= Chunk::SizeZ)
-			return pz ? pz->tryGet(x, y, z - Chunk::SizeZ, voxel) : false;
+			return nz ? nz->tryGet(x, y, z + Chunk::sizeZ, voxel) : false;
+		if (z >= Chunk::sizeZ)
+			return pz ? pz->tryGet(x, y, z - Chunk::sizeZ, voxel) : false;
 		return c ? c->tryGet(x, y, z, voxel) : false;
 	}
 	/**
@@ -179,17 +179,17 @@ struct Cluster3
 	bool trySet(uint16_t x, uint16_t y, uint16_t z, Voxel voxel) noexcept
 	{
 		if (x < 0)
-			return nx ? nx->trySet(x + Chunk::SizeX, y, z, voxel) : false;
-		if (x >= Chunk::SizeX)
-			return px ? px->trySet(x - Chunk::SizeX, y, z, voxel) : false;
+			return nx ? nx->trySet(x + Chunk::sizeX, y, z, voxel) : false;
+		if (x >= Chunk::sizeX)
+			return px ? px->trySet(x - Chunk::sizeX, y, z, voxel) : false;
 		if (y < 0)
-			return ny ? ny->trySet(x, y + Chunk::SizeY, z, voxel) : false;
-		if (y >= Chunk::SizeY)
-			return py ? py->trySet(x, y - Chunk::SizeY, z, voxel) : false;
+			return ny ? ny->trySet(x, y + Chunk::sizeY, z, voxel) : false;
+		if (y >= Chunk::sizeY)
+			return py ? py->trySet(x, y - Chunk::sizeY, z, voxel) : false;
 		if (z < 0)
-			return nz ? nz->trySet(x, y, z + Chunk::SizeZ, voxel) : false;
-		if (z >= Chunk::SizeZ)
-			return pz ? pz->trySet(x, y, z - Chunk::SizeZ, voxel) : false;
+			return nz ? nz->trySet(x, y, z + Chunk::sizeZ, voxel) : false;
+		if (z >= Chunk::sizeZ)
+			return pz ? pz->trySet(x, y, z - Chunk::sizeZ, voxel) : false;
 		return c ? c->trySet(x, y, z, voxel) : false;
 	}
 };
