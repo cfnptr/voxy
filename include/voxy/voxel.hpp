@@ -26,18 +26,18 @@ namespace voxy::voxel
 /**
  * @brief Predefined empty (air) voxel ID.
  */
-const uint32_t null = 0;
+constexpr uint32_t null = 0;
 /**
  * @brief Predefined unknown (missing) voxel ID.
  */
-const uint32_t unknown = 1;
+constexpr uint32_t unknown = 1;
 /**
  * @brief Predefined debugging voxel ID.
  */
-const uint32_t debug = 2;
+constexpr uint32_t debug = 2;
 /**
  * @brief Predefined voxel ID count.
  */
-const uint32_t predefinedCount = 3;
+constexpr uint32_t predefinedCount = 3;
 
 };

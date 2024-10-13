@@ -60,7 +60,7 @@ struct Cluster3
 	/**
 	 * @brief Chunk group size around center chunk. (including center one)
 	 */
-	inline static const uint8_t chunkSize = 7;
+	static constexpr uint8_t chunkSize = 7;
 
 	Chunk *c, *nx, *px, *ny, *py, *nz, *pz;
 
@@ -75,17 +75,14 @@ struct Cluster3
 	 * @param nz negative Z-axis chunk pointer (-z)
 	 * @param pz positive Z-axis chunk pointer (+z)
 	 */
-	Cluster3(Chunk* c = nullptr, Chunk* nx = nullptr, Chunk* px = nullptr,
-		Chunk* ny = nullptr, Chunk* py = nullptr, Chunk* nz = nullptr, Chunk* pz = nullptr)
-	{
-		this->c = c; this->nx = nx; this->px = px; this->ny = ny;
-		this->py = py; this->nz = nz; this->pz = pz;
-	}
+	constexpr Cluster3(Chunk* c = nullptr, Chunk* nx = nullptr, Chunk* px = nullptr,
+		Chunk* ny = nullptr, Chunk* py = nullptr, Chunk* nz = nullptr, Chunk* pz = nullptr) noexcept :
+		c(c), nx(nx), px(px), ny(ny), py(py), nz(nz), pz(pz) { }
 
 	/**
 	 * @brief Are all cluster chunks not null.
 	 */
-	bool isComplete() const noexcept
+	constexpr bool isComplete() const noexcept
 	{
 		return c && nx && px && ny && py && nz && pz;
 	}
