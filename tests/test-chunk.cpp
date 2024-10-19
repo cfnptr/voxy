@@ -17,7 +17,6 @@
 #include <cstdlib>
 #include <stdexcept>
 
-using namespace std;
 using namespace voxy;
 
 typedef Chunk3<16, 16, 16, uint8_t> Chunk;
