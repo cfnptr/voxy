@@ -62,18 +62,24 @@ struct Cluster3
 	 */
 	static constexpr uint8_t chunkSize = 7;
 
-	Chunk *c, *nx, *px, *ny, *py, *nz, *pz;
+	C* c  = nullptr; /**< Central chunk instance. */
+	C* nx = nullptr; /**< Negative X-axis chunk instance (-x) */
+	C* px = nullptr; /**< Positive X-axis chunk instance (+x) */
+	C* ny = nullptr; /**< Negative Y-axis chunk instance (-y) */
+	C* py = nullptr; /**< Positive Y-axis chunk instance (+y) */
+	C* nz = nullptr; /**< Negative Z-axis chunk instance (-z) */
+	C* pz = nullptr; /**< Positive Z-axis chunk instance (+z) */
 
 	/**
 	 * @brief Creates a new chunk cluster.
 	 * 
-	 * @param c central chunk pointer
-	 * @param nx negative X-axis chunk pointer (-x)
-	 * @param px positive X-axis chunk pointer (+x)
-	 * @param ny negative Y-axis chunk pointer (-y)
-	 * @param py positive Y-axis chunk pointer (+y)
-	 * @param nz negative Z-axis chunk pointer (-z)
-	 * @param pz positive Z-axis chunk pointer (+z)
+	 * @param c central chunk instance
+	 * @param nx negative X-axis chunk instance (-x)
+	 * @param px positive X-axis chunk instance (+x)
+	 * @param ny negative Y-axis chunk instance (-y)
+	 * @param py positive Y-axis chunk instance (+y)
+	 * @param nz negative Z-axis chunk instance (-z)
+	 * @param pz positive Z-axis chunk instance (+z)
 	 */
 	constexpr Cluster3(Chunk* c = nullptr, Chunk* nx = nullptr, Chunk* px = nullptr,
 		Chunk* ny = nullptr, Chunk* py = nullptr, Chunk* nz = nullptr, Chunk* pz = nullptr) noexcept :
