@@ -31,7 +31,7 @@ namespace voxy
 /**
  * @brief Calculates chunk index from chunk position and size.
  */
-constexpr size_t posToChunkIndex(uint8_t x, uint8_t y, uint8_t z, uint8_t sizeX, uint16_t sizeXY) noexcept
+static constexpr size_t posToChunkIndex(uint8_t x, uint8_t y, uint8_t z, uint8_t sizeX, uint16_t sizeXY) noexcept
 {
 	return ((size_t)z * sizeXY + (size_t)y * sizeX + x);
 }
