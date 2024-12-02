@@ -29,11 +29,17 @@ namespace voxy
 {
 
 /**
- * @brief Calculates chunk index from chunk position and size.
+ * @brief Calculates chunk voxel index from the position and chunk size.
+ *
+ * @param x voxel position along X-axis
+ * @param y voxel position along Y-axis
+ * @param z voxel position along Z-axis
+ * @param sizeX chunk size in voxels along X-axis
+ * @param sizeXY chunk size in voxels along X * Y axies
  */
-static constexpr size_t posToChunkIndex(uint8_t x, uint8_t y, uint8_t z, uint8_t sizeX, uint16_t sizeXY) noexcept
+static constexpr size_t posToVoxelIndex(uint8_t x, uint8_t y, uint8_t z, uint8_t sizeX, uint16_t sizeXY) noexcept
 {
-	return ((size_t)z * sizeXY + (size_t)y * sizeX + x);
+	return (size_t)z * sizeXY + (size_t)y * sizeX + x;
 }
 
 /**
@@ -96,6 +102,18 @@ public:
 	const Voxel* getVoxels() const noexcept { return voxels; }
 
 	/**
+	 * @brief Calculates chunk voxel index from the position.
+	 *
+	 * @param x voxel position along X-axis
+	 * @param y voxel position along Y-axis
+	 * @param z voxel position along Z-axis
+	 */
+	static constexpr size_t posToIndex(uint8_t x, uint8_t y, uint8_t z) noexcept
+	{
+		return (size_t)z * sizeXY + (size_t)y * sizeX + x;
+	}
+
+	/**
 	 * @brief Returns chunk voxel at specified 3D position.
 	 * @note Use with care, it doesn't checks for out of chunk bounds!
 	 * 
@@ -108,7 +126,7 @@ public:
 		assert(x < SX);
 		assert(y < SY);
 		assert(z < SZ);
-		return voxels[posToChunkIndex(x, y, z, SX, sizeXY)];
+		return voxels[posToIndex(x, y, z)];
 	}
 	/**
 	 * @brief Sets chunk voxel at specified 3D position.
@@ -124,7 +142,7 @@ public:
 		assert(x < SX);
 		assert(y < SY);
 		assert(z < SZ);
-		voxels[posToChunkIndex(x, y, z, SX, sizeXY)] = voxel;
+		voxels[posToIndex(x, y, z)] = voxel;
 	}
 
 	/**
@@ -163,7 +181,7 @@ public:
 	{
 		if (x >= SX || y >= SY || z >= SZ)
 			return false;
-		voxel = voxels[posToChunkIndex(x, y, z, SX, sizeXY)];
+		voxel = voxels[posToIndex(x, y, z)];
 		return true;
 	}
 	/**
@@ -179,7 +197,7 @@ public:
 	{
 		if (x >= SX || y >= SY || z >= SZ)
 			return false;
-		voxels[posToChunkIndex(x, y, z, SX, sizeXY)] = voxel;
+		voxels[posToIndex(x, y, z)] = voxel;
 		return true;
 	}
 
@@ -220,7 +238,7 @@ public:
 	{
 		if (voxel == voxel::null)
 		{
-			memset(voxels, 0, size * sizeof(V));
+			memset(voxels, 0, size * sizeof(Voxel));
 		}
 		else
 		{
@@ -264,10 +282,8 @@ public:
 		{
 			for (uint8_t y = 0; y < _sizeY; y++)
 			{
-				memcpy(this->voxels + posToChunkIndex(
-					offsetX, offsetY + y, offsetZ + z, SX, sizeXY),
-					voxels + posToChunkIndex(0, y, z, _sizeX, _sizeXY),
-					_sizeX * sizeof(Voxel));
+				memcpy(this->voxels + posToIndex(offsetX, offsetY + y, offsetZ + z),
+					voxels + posToVoxelIndex(0, y, z, _sizeX, _sizeXY), _sizeX * sizeof(Voxel));
 			}
 		}
 	}
