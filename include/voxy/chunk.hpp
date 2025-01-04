@@ -231,10 +231,10 @@ public:
 	}
 
 	/**
-	 * @brief Fills chunk with specified voxel ID
+	 * @brief Fills chunk with specified voxel ID.
 	 * @param voxel target voxel ID
 	 */
-	void fill(Voxel voxel) noexcept
+	void fill(Voxel voxel = voxel::null) noexcept
 	{
 		if (voxel == voxel::null)
 		{
