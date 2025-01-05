@@ -31,7 +31,7 @@ namespace voxy
 {
 
 /***********************************************************************************************************************
- * @brief Nearby chunk group container. (including center one)
+ * @brief Nearby chunk 3D group container. (including center one)
  * 
  * @details
  * c  - central chunk (main)
@@ -46,7 +46,7 @@ namespace voxy
  * @tparam V chunk voxel ID type
  */
 template<class C, typename V>
-struct Cluster3
+struct Cluster3D
 {
 	/**
 	 * @brief Cluster chunk type.
@@ -71,7 +71,7 @@ struct Cluster3
 	C* pz = nullptr; /**< Positive Z-axis chunk instance (+z) */
 
 	/**
-	 * @brief Creates a new chunk cluster.
+	 * @brief Creates a new chunk 3D cluster.
 	 * 
 	 * @param c central chunk instance
 	 * @param nx negative X-axis chunk instance (-x)
@@ -81,7 +81,7 @@ struct Cluster3
 	 * @param nz negative Z-axis chunk instance (-z)
 	 * @param pz positive Z-axis chunk instance (+z)
 	 */
-	constexpr Cluster3(Chunk* c = nullptr, Chunk* nx = nullptr, Chunk* px = nullptr,
+	constexpr Cluster3D(Chunk* c = nullptr, Chunk* nx = nullptr, Chunk* px = nullptr,
 		Chunk* ny = nullptr, Chunk* py = nullptr, Chunk* nz = nullptr, Chunk* pz = nullptr) noexcept :
 		c(c), nx(nx), px(px), ny(ny), py(py), nz(nz), pz(pz) { }
 

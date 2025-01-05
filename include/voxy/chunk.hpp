@@ -29,15 +29,24 @@ namespace voxy
 {
 
 /**
- * @brief Calculates chunk voxel index from the position and chunk size.
+ * @brief Calculates volume point index from the position and volume size.
  *
- * @param x voxel position along X-axis
- * @param y voxel position along Y-axis
- * @param z voxel position along Z-axis
- * @param sizeX chunk size in voxels along X-axis
- * @param sizeXY chunk size in voxels along X * Y axies
+ * @tparam T type of the position integers
+ * @param x point position along X-axis
+ * @param y point position along Y-axis
+ * @param z point position along Z-axis
+ * @param sizeX volume size in point along X-axis
+ * @param sizeXY volume size in point along X * Y
  */
-static constexpr size_t posToVoxelIndex(uint8_t x, uint8_t y, uint8_t z, uint8_t sizeX, uint16_t sizeXY) noexcept
+template<typename T /* = uint8_t */>
+static constexpr size_t posToIndex(T x, T y, T z, T sizeX, size_t sizeXY) noexcept
+{
+	return (size_t)z * sizeXY + (size_t)y * sizeX + x;
+}
+
+template<typename T /* = uint8_t */>
+static constexpr void indexToPos(T x, T y, T z, 
+	T sizeX, uint16_t sizeXY, size_t& index) noexcept
 {
 	return (size_t)z * sizeXY + (size_t)y * sizeX + x;
 }
@@ -51,7 +60,7 @@ static constexpr size_t posToVoxelIndex(uint8_t x, uint8_t y, uint8_t z, uint8_t
  * @tparam V chunk voxel ID type
  */
 template<uint8_t SX, uint8_t SY, uint8_t SZ, typename V>
-struct Chunk3
+struct Chunk3D
 {
 public:
 	/**
@@ -85,12 +94,12 @@ public:
 	 * @brief Creates a new uninitialized chunk.
 	 * @note Chunk may contain garbage voxels.
 	 */
-	Chunk3() = default;
+	Chunk3D() = default;
 	/**
 	 * @brief Creates a new initialized chunk.
 	 * @param voxel target voxel to fill chunk with
 	 */
-	Chunk3(Voxel voxel) { fill(voxel); }
+	Chunk3D(Voxel voxel) { fill(voxel); }
 
 	/**
 	 * @brief Returns chunk voxel array.
@@ -110,7 +119,7 @@ public:
 	 */
 	static constexpr size_t posToIndex(uint8_t x, uint8_t y, uint8_t z) noexcept
 	{
-		return (size_t)z * sizeXY + (size_t)y * sizeX + x;
+		return ::posToIndex(x, y, z, sizeX, sizeXY);
 	}
 
 	/**
@@ -283,7 +292,7 @@ public:
 			for (uint8_t y = 0; y < _sizeY; y++)
 			{
 				memcpy(this->voxels + posToIndex(offsetX, offsetY + y, offsetZ + z),
-					voxels + posToVoxelIndex(0, y, z, _sizeX, _sizeXY), _sizeX * sizeof(Voxel));
+					voxels + posToIndex(0, y, z, _sizeX, _sizeXY), _sizeX * sizeof(Voxel));
 			}
 		}
 	}
