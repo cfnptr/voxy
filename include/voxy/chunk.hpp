@@ -292,7 +292,7 @@ public:
 			for (uint8_t y = 0; y < _sizeY; y++)
 			{
 				memcpy(this->voxels + posToIndex(offsetX, offsetY + y, offsetZ + z),
-					voxels + posToIndex(0, y, z, _sizeX, _sizeXY), _sizeX * sizeof(Voxel));
+					voxels + voxy::posToIndex(0, y, z, _sizeX, _sizeXY), _sizeX * sizeof(Voxel));
 			}
 		}
 	}
