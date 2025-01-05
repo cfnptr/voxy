@@ -119,7 +119,7 @@ public:
 	 */
 	static constexpr size_t posToIndex(uint8_t x, uint8_t y, uint8_t z) noexcept
 	{
-		return ::posToIndex(x, y, z, sizeX, sizeXY);
+		return voxy::posToIndex(x, y, z, sizeX, sizeXY);
 	}
 
 	/**
