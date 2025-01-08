@@ -57,7 +57,6 @@ static void runLayerIterator3D(const std::function<void(T, T, T)>& onIter, T pos
 {
 	assert(onIter);
 	assert(positive > negative);
-
 	T negativeOne = negative + 1, positiveOne = positive - 1;
 
 	// Iterate over X*Y negative/positive volume layers.
@@ -130,23 +129,20 @@ static void runCenterIterator3D(const std::function<void(T, T, T)>& onIter, T ce
 }
 
 /***********************************************************************************************************************
- * @brief Begins 3D volume expanding iterator.
+ * @brief Prepares 3D volume expanding iterator variables.
  * 
  * @tparam T type of the size and positive/negative integer
- * @param[in] onIter target function to execute on volume point iteration
  * @param size size of the volume along one axis in points
+ * @param[out] center return 3D volume central point
  * @param[out] positive returns positive volume layer index
  * @param[out] negative returns negative volume layer index
+ * @param[out] isEven returns if volume size even or odd
  */
 template<typename T /* = uint8_t */>
-static void beginExpandIterator3D(const std::function<void(T, T, T)>& onIter, T size, T& positive, T& negative)
+static constexpr void prepareExpandIterator3D(T size, T& center, T& positive, T& negative, bool& isEven)
 {
-	assert(onIter);
 	assert(size > 1);
-
-	T center; bool isEven;
 	prepareIterator3D(size, center, positive, isEven);
-	runCenterIterator3D(onIter, center, positive, isEven);
 	negative = center - 1;
 }
 /**
@@ -188,8 +184,9 @@ static void expandIterator3D(const std::function<void(T, T, T)>& onIter, T size)
 	assert(onIter);
 	assert(size > 1);
 	
-	T positive, negative;
-	beginExpandIterator3D(onIter, size, positive, negative);
+	T center, positive, negative; bool isEven;
+	prepareExpandIterator3D(size, center, positive, negative, isEven);
+	runCenterIterator3D(onIter, center, positive, isEven);
 
 	while (checkExpandIterator3D(size, positive))
 	{
@@ -199,7 +196,7 @@ static void expandIterator3D(const std::function<void(T, T, T)>& onIter, T size)
 }
 
 /***********************************************************************************************************************
- * @brief Begins 3D volume shrinking iterator.
+ * @brief Prepares 3D volume shrinking iterator variables.
  * 
  * @tparam T type of the size and positive/negative integer
  * @param size size of the volume along one axis in points
@@ -207,7 +204,7 @@ static void expandIterator3D(const std::function<void(T, T, T)>& onIter, T size)
  * @param[out] negative returns negative volume layer index
  */
 template<typename T /* = uint8_t */>
-static constexpr void beginShrinkIterator3D(T size, T& positive, T& negative)
+static constexpr void prepareShrinkIterator3D(T size, T& positive, T& negative)
 {
 	assert(size > 1);
 	negative = 0;
@@ -240,23 +237,6 @@ static constexpr void advanceShrinkIterator3D(T& positive, T& negative)
 	negative++;
 }
 /**
- * @brief Ends 3D volume shrinking iterator.
- * 
- * @tparam T type of the size and positive/negative integer
- * @param[in] onIter target function to execute on volume point iteration
- * @param size size of the volume along one axis in points
- */
-template<typename T /* = uint8_t */>
-static void endShrinkIterator3D(const std::function<void(T, T, T)>& onIter, T size)
-{
-	assert(onIter);
-	assert(size > 1);
-
-	T center, positive; bool isEven;
-	prepareIterator3D(size, center, positive, isEven);
-	runCenterIterator3D(onIter, center, positive, isEven);
-}
-/**
  * @brief Iterates over 3D volume layers shrinking to the inner center.
  * 
  * @tparam T type of the size integer
@@ -270,7 +250,7 @@ static void shrinkIterator3D(const std::function<void(T, T, T)>& onIter, T size)
 	assert(size > 1);
 	
 	T positive, negative;
-	beginShrinkIterator3D(size, positive, negative);
+	prepareShrinkIterator3D(size, positive, negative);
 
 	while (checkShrinkIterator3D(positive, negative))
 	{
@@ -278,7 +258,9 @@ static void shrinkIterator3D(const std::function<void(T, T, T)>& onIter, T size)
 		advanceShrinkIterator3D(positive, negative);
 	}
 
-	endShrinkIterator3D(onIter, size);
+	T center; bool isEven;
+	prepareIterator3D(size, center, positive, isEven);
+	runCenterIterator3D(onIter, center, positive, isEven);
 }
 
 };
