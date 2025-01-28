@@ -35,23 +35,35 @@ namespace voxy
  * @param x point position along X-axis
  * @param y point position along Y-axis
  * @param z point position along Z-axis
- * @param sizeX volume size in point along X-axis
- * @param sizeXY volume size in point along X * Y
+ * @param sizeX volume size in points along X-axis
+ * @param sizeXY volume size in points along X * Y
  */
 template<typename T /* = uint8_t */>
 static constexpr size_t posToIndex(T x, T y, T z, T sizeX, size_t sizeXY) noexcept
 {
 	return (size_t)z * sizeXY + (size_t)y * sizeX + x;
 }
-
+/**
+ * @brief Calculates volume point position from the index and volume size.
+ *
+ * @tparam T type of the position integers
+ * @param index point index inside the volume
+ * @param sizeX volume size in points along X-axis
+ * @param sizeXY volume size in points along X * Y
+ * @param x point position along X-axis
+ * @param y point position along Y-axis
+ * @param z point position along Z-axis
+ */
 template<typename T /* = uint8_t */>
-static constexpr void indexToPos(T x, T y, T z, 
-	T sizeX, uint16_t sizeXY, size_t& index) noexcept
+static constexpr void indexToPos(size_t index, T sizeX, size_t sizeXY, T& x, T& y, T& z) noexcept
 {
-	return (size_t)z * sizeXY + (size_t)y * sizeX + x;
+	z = (T)(index / sizeXY);
+	index %= sizeXY;
+	y = (T)(index / sizeX);
+	x = (T)(index % sizeX);
 }
 
-/**
+/***********************************************************************************************************************
  * @brief Voxel 3D container. (array)
  * 
  * @tparam SX chunk size in voxels along X-axis
