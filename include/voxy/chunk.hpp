@@ -133,6 +133,18 @@ public:
 	{
 		return voxy::posToIndex(x, y, z, sizeX, sizeXY);
 	}
+	/**
+	 * @brief Calculates chunk voxel position from the index.
+	 *
+	 * @param index voxel index inside the chunk
+	 * @param[out] x voxel position along X-axis
+	 * @param[out] y voxel position along Y-axis
+	 * @param[out] z voxel position along Z-axis
+	 */
+	static constexpr void indexToPos(size_t index, uint8_t& x, uint8_t& y, uint8_t& z) noexcept
+	{
+		voxy::indexToPos(index, sizeX, sizeXY, x, y, z);
+	}
 
 	/**
 	 * @brief Returns chunk voxel at specified 3D position.
