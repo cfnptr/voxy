@@ -39,7 +39,7 @@ namespace voxy
  * @param sizeXY volume size in points along X * Y
  */
 template<typename T /* = uint8_t */>
-static constexpr size_t posToIndex(T x, T y, T z, T sizeX, size_t sizeXY) noexcept
+static constexpr size_t posToIndex(T x, T y, T z, size_t sizeX, size_t sizeXY) noexcept
 {
 	return (size_t)z * sizeXY + (size_t)y * sizeX + x;
 }
@@ -55,7 +55,7 @@ static constexpr size_t posToIndex(T x, T y, T z, T sizeX, size_t sizeXY) noexce
  * @param z point position along Z-axis
  */
 template<typename T /* = uint8_t */>
-static constexpr void indexToPos(size_t index, T sizeX, size_t sizeXY, T& x, T& y, T& z) noexcept
+static constexpr void indexToPos(size_t index, size_t sizeX, size_t sizeXY, T& x, T& y, T& z) noexcept
 {
 	z = (T)(index / sizeXY);
 	index %= sizeXY;
