@@ -264,6 +264,53 @@ public:
 	}
 
 	/**
+	 * @brief Returns chunk voxel at specified 3D position.
+	 * @warning Skips out of bounds check in Debug and Release builds!
+	 * 
+	 * @param x voxel position along X-axis
+	 * @param y voxel position along Y-axis
+	 * @param z voxel position along Z-axis
+	 */
+	Voxel unsafeGet(uint8_t x, uint8_t y, uint8_t z) const noexcept
+	{
+		return voxels[posToIndex(x, y, z)];
+	}
+	/**
+	 * @brief Sets chunk voxel at specified 3D position.
+	 * @warning Skips out of bounds check in Debug and Release builds!
+	 * 
+	 * @param x voxel position along X-axis
+	 * @param y voxel position along Y-axis
+	 * @param z voxel position along Z-axis
+	 * @param voxel target voxel ID
+	 */
+	void unsafeSet(uint8_t x, uint8_t y, uint8_t z, Voxel voxel) noexcept
+	{
+		voxels[posToIndex(x, y, z)] = voxel;
+	}
+
+	/**
+	 * @brief Returns chunk voxel at specified array index.
+	 * @warning Skips out of bounds check in Debug and Release builds!
+	 * @param index target voxel index inside array
+	 */
+	Voxel unsafeGet(size_t index) const noexcept
+	{
+		return voxels[index];
+	}
+	/**
+	 * @brief Sets chunk voxel at specified array index.
+	 * @warning Skips out of bounds check in Debug and Release builds!
+	 * 
+	 * @param index target voxel index inside array
+	 * @param voxel target voxel ID
+	 */
+	void unsafeSet(size_t index, Voxel voxel) noexcept
+	{
+		voxels[index] = voxel;
+	}
+
+	/**
 	 * @brief Fills chunk with specified voxel ID.
 	 * @param voxel target voxel ID
 	 */
