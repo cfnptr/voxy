@@ -94,7 +94,7 @@ struct Cluster3D
 	}
 
 	/**
-	 * @breaf Returns cluster voxel at specified 3D position.
+	 * @brief Returns cluster voxel at specified 3D position.
 	 * @note Use with care, it doesn't checks for out of cluster bounds!
 	 * 
 	 * @param x voxel position along X-axis
@@ -119,7 +119,7 @@ struct Cluster3D
 		return c->get(x, y, z);
 	}
 	/**
-	 * @breaf Sets cluster voxel at specified 3D position.
+	 * @brief Sets cluster voxel at specified 3D position.
 	 * @note Use with care, it doesn't checks for out of cluster bounds!
 	 *
 	 * @param x voxel position along X-axis
