@@ -94,7 +94,8 @@ public:
 	/**
 	 * @brief Chunk array size in voxels, or chunk volume. (sizeX * sizeY * sizeZ)
 	 */
-	static constexpr size_t size = SX * SY * SZ;
+	static constexpr uint32_t size = SX * SY * SZ;
+	
 	/**
 	 * @brief Chunk voxel ID type.
 	 */
