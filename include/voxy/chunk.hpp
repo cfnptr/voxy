@@ -29,7 +29,7 @@ namespace voxy
 {
 
 /**
- * @brief Calculates volume point index from the position and volume size.
+ * @brief Calculates volume 3D point index from the position and volume size.
  *
  * @tparam T type of the position integers
  * @param x point position along X-axis
@@ -44,7 +44,7 @@ static constexpr size_t posToIndex(T x, T y, T z, size_t sizeX, size_t sizeXY) n
 	return (size_t)z * sizeXY + (size_t)y * sizeX + x;
 }
 /**
- * @brief Calculates volume point position from the index and volume size.
+ * @brief Calculates volume point 3D position from the index and volume size.
  *
  * @tparam T type of the position integers
  * @param index point index inside the volume
@@ -76,21 +76,21 @@ struct Chunk3D
 {
 public:
 	/**
-	 * @brief Chunk size in voxels along X-axis.
+	 * @brief Chunk length in voxels along X-axis.
 	 */
-	static constexpr uint8_t sizeX = SX;
+	static constexpr uint8_t lengthX = SX;
 	/**
-	 * @brief Chunk size in voxels along Y-axis.
+	 * @brief Chunk length in voxels along Y-axis.
 	 */
-	static constexpr uint8_t sizeY = SY;
+	static constexpr uint8_t lengthY = SY;
 	/**
-	 * @brief Chunk size in voxels along Z-axis.
+	 * @brief Chunk length in voxels along Z-axis.
 	 */
-	static constexpr uint8_t sizeZ = SZ;
+	static constexpr uint8_t lengthZ = SZ;
 	/**
 	 * @brief Chunk layer size in voxels. (sizeX * sizeY)
 	 */
-	static constexpr uint16_t sizeXY = SX * SY;
+	static constexpr uint16_t layerSize = SX * SY;
 	/**
 	 * @brief Chunk array size in voxels, or chunk volume. (sizeX * sizeY * sizeZ)
 	 */
@@ -103,7 +103,7 @@ public:
 protected:
 	Voxel voxels[size];
 public:
-	/**
+	/*******************************************************************************************************************
 	 * @brief Creates a new uninitialized chunk.
 	 * @note Chunk may contain garbage voxels.
 	 */
@@ -124,30 +124,30 @@ public:
 	const Voxel* getVoxels() const noexcept { return voxels; }
 
 	/**
-	 * @brief Calculates chunk voxel index from the position.
+	 * @brief Calculates chunk voxel index from the 3D position.
 	 *
 	 * @param x voxel position along X-axis
 	 * @param y voxel position along Y-axis
 	 * @param z voxel position along Z-axis
 	 */
-	static constexpr size_t posToIndex(uint8_t x, uint8_t y, uint8_t z) noexcept
+	static constexpr uint32_t posToIndex(uint8_t x, uint8_t y, uint8_t z) noexcept
 	{
-		return voxy::posToIndex(x, y, z, sizeX, sizeXY);
+		return voxy::posToIndex(x, y, z, lengthX, layerSize);
 	}
 	/**
-	 * @brief Calculates chunk voxel position from the index.
+	 * @brief Calculates chunk voxel 3D position from the index.
 	 *
 	 * @param index voxel index inside the chunk
 	 * @param[out] x voxel position along X-axis
 	 * @param[out] y voxel position along Y-axis
 	 * @param[out] z voxel position along Z-axis
 	 */
-	static constexpr void indexToPos(size_t index, uint8_t& x, uint8_t& y, uint8_t& z) noexcept
+	static constexpr void indexToPos(uint32_t index, uint8_t& x, uint8_t& y, uint8_t& z) noexcept
 	{
-		voxy::indexToPos(index, sizeX, sizeXY, x, y, z);
+		voxy::indexToPos(index, lengthX, layerSize, x, y, z);
 	}
 
-	/**
+	/*******************************************************************************************************************
 	 * @brief Returns chunk voxel at specified 3D position.
 	 * @note Use with care, it doesn't checks for out of chunk bounds!
 	 * 
@@ -157,10 +157,9 @@ public:
 	 */
 	Voxel get(uint8_t x, uint8_t y, uint8_t z) const noexcept
 	{
-		assert(x < SX);
-		assert(y < SY);
-		assert(z < SZ);
-		return voxels[posToIndex(x, y, z)];
+		auto index = posToIndex(x, y, z);
+		assert(index < size);
+		return voxels[index];
 	}
 	/**
 	 * @brief Sets chunk voxel at specified 3D position.
@@ -173,10 +172,9 @@ public:
 	 */
 	void set(uint8_t x, uint8_t y, uint8_t z, Voxel voxel) noexcept
 	{
-		assert(x < SX);
-		assert(y < SY);
-		assert(z < SZ);
-		voxels[posToIndex(x, y, z)] = voxel;
+		auto index = posToIndex(x, y, z);
+		assert(index < size);
+		voxels[index] = voxel;
 	}
 
 	/**
@@ -184,7 +182,7 @@ public:
 	 * @note Use with care, it doesn't checks for out of array bounds!
 	 * @param index target voxel index inside array
 	 */
-	Voxel get(size_t index) const noexcept
+	Voxel get(uint32_t index) const noexcept
 	{
 		assert(index < size);
 		return voxels[index];
@@ -196,13 +194,13 @@ public:
 	 * @param index target voxel index inside array
 	 * @param voxel target voxel ID
 	 */
-	void set(size_t index, Voxel voxel) noexcept
+	void set(uint32_t index, Voxel voxel) noexcept
 	{
 		assert(index < size);
 		voxels[index] = voxel;
 	}
 
-	/**
+	/*******************************************************************************************************************
 	 * @brief Returns chunk voxel at specified 3D position if inside chunk bounds.
 	 * @return True if voxel position is inside chunk bounds, otherwise false.
 	 * 
@@ -213,9 +211,10 @@ public:
 	 */
 	bool tryGet(uint8_t x, uint8_t y, uint8_t z, Voxel& voxel) const noexcept
 	{
-		if (x >= SX || y >= SY || z >= SZ)
+		auto index = posToIndex(x, y, z);
+		if (index >= size)
 			return false;
-		voxel = voxels[posToIndex(x, y, z)];
+		voxel = voxels[index];
 		return true;
 	}
 	/**
@@ -229,9 +228,10 @@ public:
 	 */
 	bool trySet(uint8_t x, uint8_t y, uint8_t z, Voxel voxel) noexcept
 	{
-		if (x >= SX || y >= SY || z >= SZ)
+		auto index = posToIndex(x, y, z);
+		if (index >= size)
 			return false;
-		voxels[posToIndex(x, y, z)] = voxel;
+		voxels[index] = voxel;
 		return true;
 	}
 
@@ -256,7 +256,7 @@ public:
 	 * @param index target voxel index inside array
 	 * @param target voxel ID
 	 */
-	bool trySet(size_t index, Voxel voxel) noexcept
+	bool trySet(uint32_t index, Voxel voxel) noexcept
 	{
 		if (index >= size)
 			return false;
@@ -264,7 +264,7 @@ public:
 		return true;
 	}
 
-	/**
+	/*******************************************************************************************************************
 	 * @brief Returns chunk voxel at specified 3D position.
 	 * @warning Skips out of bounds check in Debug and Release builds!
 	 * 
@@ -295,7 +295,7 @@ public:
 	 * @warning Skips out of bounds check in Debug and Release builds!
 	 * @param index target voxel index inside array
 	 */
-	Voxel unsafeGet(size_t index) const noexcept
+	Voxel unsafeGet(uint32_t index) const noexcept
 	{
 		return voxels[index];
 	}
@@ -306,12 +306,12 @@ public:
 	 * @param index target voxel index inside array
 	 * @param voxel target voxel ID
 	 */
-	void unsafeSet(size_t index, Voxel voxel) noexcept
+	void unsafeSet(uint32_t index, Voxel voxel) noexcept
 	{
 		voxels[index] = voxel;
 	}
 
-	/**
+	/*******************************************************************************************************************
 	 * @brief Fills chunk with specified voxel ID.
 	 * @param voxel target voxel ID
 	 */
