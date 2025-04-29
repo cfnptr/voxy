@@ -35,32 +35,32 @@ namespace voxy
  * @param x point position along X-axis
  * @param y point position along Y-axis
  * @param z point position along Z-axis
- * @param sizeX volume size in points along X-axis
- * @param sizeXY volume size in points along X * Y
+ * @param length volume length in points along X-axis
+ * @param layerSize volume layer size in points along X * Y
  */
 template<typename T /* = uint8_t */>
-static constexpr size_t posToIndex(T x, T y, T z, size_t sizeX, size_t sizeXY) noexcept
+static constexpr size_t posToIndex(T x, T y, T z, size_t length, size_t layerSize) noexcept
 {
-	return (size_t)z * sizeXY + (size_t)y * sizeX + x;
+	return (size_t)z * layerSize + (size_t)y * length + (size_t)x;
 }
 /**
  * @brief Calculates volume point 3D position from the index and volume size.
  *
  * @tparam T type of the position integers
  * @param index point index inside the volume
- * @param sizeX volume size in points along X-axis
- * @param sizeXY volume size in points along X * Y
+ * @param length volume length in points along X-axis
+ * @param layerSize volume layer size in points along X * Y
  * @param x point position along X-axis
  * @param y point position along Y-axis
  * @param z point position along Z-axis
  */
 template<typename T /* = uint8_t */>
-static constexpr void indexToPos(size_t index, size_t sizeX, size_t sizeXY, T& x, T& y, T& z) noexcept
+static constexpr void indexToPos(size_t index, size_t length, size_t layerSize, T& x, T& y, T& z) noexcept
 {
-	z = (T)(index / sizeXY);
-	index %= sizeXY;
-	y = (T)(index / sizeX);
-	x = (T)(index % sizeX);
+	z = (T)(index / layerSize);
+	index %= layerSize;
+	y = (T)(index / length);
+	x = (T)(index % length);
 }
 
 /***********************************************************************************************************************
@@ -101,7 +101,7 @@ public:
 	 */
 	typedef V Voxel;
 protected:
-	Voxel voxels[size];
+	Voxel voxels[size] = {};
 public:
 	/*******************************************************************************************************************
 	 * @brief Creates a new uninitialized chunk.
@@ -202,12 +202,13 @@ public:
 
 	/*******************************************************************************************************************
 	 * @brief Returns chunk voxel at specified 3D position if inside chunk bounds.
-	 * @return True if voxel position is inside chunk bounds, otherwise false.
 	 * 
 	 * @param x voxel position along X-axis
 	 * @param y voxel position along Y-axis
 	 * @param z voxel position along Z-axis
 	 * @param[out] voxel target voxel ID
+	 *
+	 * @return True if voxel 3D position is inside the chunk bounds, otherwise false.
 	 */
 	bool tryGet(uint8_t x, uint8_t y, uint8_t z, Voxel& voxel) const noexcept
 	{
@@ -219,12 +220,13 @@ public:
 	}
 	/**
 	 * @brief Sets chunk voxel at specified 3D position if inside chunk bounds.
-	 * @return True if voxel position is inside chunk bounds, otherwise false.
 	 *
 	 * @param x voxel position along X-axis
 	 * @param y voxel position along Y-axis
 	 * @param z voxel position along Z-axis
 	 * @param voxel target voxel ID
+	 *
+	 * @return True if voxel 3D position is inside the chunk bounds, otherwise false.
 	 */
 	bool trySet(uint8_t x, uint8_t y, uint8_t z, Voxel voxel) noexcept
 	{
@@ -237,12 +239,13 @@ public:
 
 	/**
 	 * @brief Returns chunk voxel at specified array index if inside array bounds.
-	 * @return True if voxel index is inside array bounds, otherwise false.
 	 *
 	 * @param index target voxel index inside array
 	 * @param[out] voxel target voxel ID
+	 *
+	 * @return True if voxel index is inside array bounds, otherwise false.
 	 */
-	bool tryGet(size_t index, Voxel& voxel) const noexcept
+	bool tryGet(uint32_t index, Voxel& voxel) const noexcept
 	{
 		if (index >= size)
 			return false;
@@ -251,10 +254,11 @@ public:
 	}
 	/**
 	 * @brief Sets chunk voxel at specified array index if inside array bounds.
-	 * @return True if voxel index is inside array bounds, otherwise false.
 	 *
 	 * @param index target voxel index inside array
 	 * @param target voxel ID
+	 *
+	 * @return True if voxel index is inside array bounds, otherwise false.
 	 */
 	bool trySet(uint32_t index, Voxel voxel) noexcept
 	{
@@ -312,20 +316,20 @@ public:
 	}
 
 	/*******************************************************************************************************************
+	 * @brief Fills chunk with zeros.
+	 */
+	void clear() noexcept
+	{
+		memset(voxels, 0, size * sizeof(Voxel));
+	}
+	/**
 	 * @brief Fills chunk with specified voxel ID.
 	 * @param voxel target voxel ID
 	 */
-	void fill(Voxel voxel = voxel::null) noexcept
+	void fill(Voxel voxel) noexcept
 	{
-		if (voxel == voxel::null)
-		{
-			memset(voxels, 0, size * sizeof(Voxel));
-		}
-		else
-		{
-			for (size_t i = 0; i < size; i++)
-				voxels[i] = voxel;
-		}
+		for (uint32_t i = 0; i < size; i++)
+			voxels[i] = voxel;
 	}
 
 	/**
@@ -342,29 +346,33 @@ public:
 	 * @brief Copies voxels from specified array part to this chunk.
 	 * @note Voxel array should have bigger or the same size as specified part!
 	 * 
-	 * @param[in] target voxel array
-	 * @param _sizeX voxel array part size along X-axis
-	 * @param _sizeY voxel array part size along Y-axis
-	 * @param _sizeZ voxel array part size along Z-axis
+	 * @param[in] target other voxel array
+	 * @param _sizeX other voxel array part size along X-axis
+	 * @param _sizeY other voxel array part size along Y-axis
+	 * @param _sizeZ other voxel array part size along Z-axis
 	 * @param offsetX voxel array part offset along X-axis
 	 * @param offsetY voxel array part offset along Y-axis
 	 * @param offsetZ voxel array part offset along Z-axis
 	 */
-	void copy(const Voxel* voxels, uint8_t _sizeX, uint8_t _sizeY, uint8_t _sizeZ,
-		uint8_t offsetX = 0, uint8_t offsetY = 0, uint8_t offsetZ = 0) noexcept
+	void copy(const Voxel* otherVoxels, 
+		uint8_t otherLength, uint16_t otherLayerSize, uint8_t countX, uint8_t countY, uint8_t countZ,
+		uint8_t otherOffsetX = 0, uint8_t otherOffsetY = 0, uint8_t otherOffsetZ = 0,
+		uint8_t thisOffsetX = 0, uint8_t thisOffsetY = 0, uint8_t thisOffsetZ = 0) noexcept
 	{
-		assert(voxels);
-		assert(_sizeX + offsetX <= SX);
-		assert(_sizeY + offsetY <= SY);
-		assert(_sizeZ + offsetZ <= SZ);
+		assert(otherVoxels);
+		assert(countX + thisOffsetX <= SX);
+		assert(countY + thisOffsetY <= SY);
+		assert(countZ + thisOffsetZ <= SZ);
+		assert(countX + otherOffsetX <= otherLength);
 
-		auto _sizeXY = _sizeX * _sizeY;
-		for (uint8_t z = 0; z < _sizeZ; z++)
+		for (uint8_t z = 0; z < countZ; z++)
 		{
-			for (uint8_t y = 0; y < _sizeY; y++)
+			for (uint8_t y = 0; y < countY; y++)
 			{
-				memcpy(this->voxels + posToIndex(offsetX, offsetY + y, offsetZ + z), voxels + 
-					voxy::posToIndex((uint8_t)0, y, z, _sizeX, _sizeXY), _sizeX * sizeof(Voxel));
+				auto thisOffset = posToIndex(thisOffsetX, y + thisOffsetY, z + thisOffsetZ);
+				auto otherOffset = voxy::posToIndex<uint8_t>(otherOffsetX, 
+					y + otherOffsetY, z + otherOffsetZ, otherLength, otherLayerSize);
+				memcpy(this->voxels + thisOffset, otherVoxels + otherOffset, countX * sizeof(Voxel));
 			}
 		}
 	}

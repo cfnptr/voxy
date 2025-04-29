@@ -99,7 +99,7 @@ public:
 	 * @param y chunk position along Y-axis
 	 * @param z chunk position along Z-axis
 	 */
-	static constexpr uint32_t posToIndex(uint8_t x, uint8_t y, uint8_t z) noexcept
+	static constexpr uint8_t posToIndex(uint8_t x, uint8_t y, uint8_t z) noexcept
 	{
 		return voxy::posToIndex(x, y, z, length, layerSize);
 	}
@@ -111,7 +111,8 @@ public:
 	 * @param[out] y chunk position along Y-axis
 	 * @param[out] z chunk position along Z-axis
 	 */
-	static constexpr void indexToPos(uint32_t index, uint8_t& x, uint8_t& y, uint8_t& z) noexcept
+	template<typename T /* = uint8_t */>
+	static constexpr void indexToPos(uint8_t index, uint8_t& x, uint8_t& y, uint8_t& z) noexcept
 	{
 		voxy::indexToPos(index, length, layerSize, x, y, z);
 	}
@@ -127,6 +128,14 @@ public:
 		return mask;
 	}
 
+	/**
+	 * @brief Returns cluster central chunk. (It can be null)
+	 */
+	Chunk* getCentralChunk() const noexcept
+	{
+		return chunks[posToIndex(1, 1, 1)];
+	}
+
 	/*******************************************************************************************************************
 	 * @brief Returns cluster chunk at specified 3D position. (It can be null)
 	 * @note Use with care, it doesn't checks for out of cluster bounds!
@@ -137,8 +146,9 @@ public:
 	 */
 	Chunk* getChunk(uint8_t x, uint8_t y, uint8_t z) const noexcept
 	{
-		assert(x < length && y < length && z < length);
-		return chunks[posToIndex(x, y, z)];
+		auto index = posToIndex(x, y, z);
+		assert(index < size);
+		return chunks[index];
 	}
 	/**
 	 * @brief Returns cluster chunk at specified array index. (It can be null)
@@ -149,6 +159,30 @@ public:
 	{
 		assert(index < size);
 		return chunks[index];
+	}
+
+	/**
+	 * @brief Returns cluster chunk at specified 3D position. (It can be null)
+	 * 
+	 * @param x chunk position along X-axis
+	 * @param y chunk position along Y-axis
+	 * @param z chunk position along Z-axis
+	 *
+	 * @return Chunk instance if 3D position is inside array bounds.
+	 */
+	Chunk* tryGetChunk(uint8_t x, uint8_t y, uint8_t z) const noexcept
+	{
+		auto index = posToIndex(x, y, z);
+		return index < size ? chunks[index] : nullptr;
+	}
+	/**
+	 * @brief Returns cluster chunk at specified array index. (It can be null)
+	 * @param index target chunk index inside array
+	 * @return Chunk instance if index is inside array bounds.
+	 */
+	Chunk* tryGetChunk(uint8_t index) const noexcept
+	{
+		return index < size ? chunks[index] : nullptr;
 	}
 
 	/**
@@ -175,14 +209,42 @@ public:
 	 * @param[in,out] y voxel position along Y-axis (Relative to the central chunk)
 	 * @param[in,out] z voxel position along Z-axis (Relative to the central chunk)
 	 *
-	 * @return Cluster chunk and sets local x/y/z if it not null.
+	 * @return Target voxel chunk and sets local x/y/z if it is not null.
 	 */
-	Chunk* getChunk(int16_t& x, int16_t& y, int16_t& z) const noexcept
+	Chunk* getVoxelChunk(int16_t& x, int16_t& y, int16_t& z) const noexcept
 	{
+		assert(x >= -Chunk::length && x <= Chunk::length * 2 - 1);
+		assert(y >= -Chunk::length && y <= Chunk::length * 2 - 1);
+		assert(z >= -Chunk::length && z <= Chunk::length * 2 - 1);
 		auto lx = x + Chunk::length, ly = y + Chunk::length, lz = z + Chunk::length;
 		lx /= Chunk::length; ly /= Chunk::length; lz /= Chunk::length;
 		auto index = posToIndex(lx, ly, lz);
-		assert(index < size);
+		--lx; --ly; --lz;
+		lx *= -Chunk::length; ly *= -Chunk::length; lz *= -Chunk::length;
+		x += lx; y += ly; z += lz;
+		return chunks[index];
+	}
+	/**
+	 * @brief Returns cluster chunk at specified voxel 3D position relative to the central chunk.
+	 *
+	 * @param[in,out] x voxel position along X-axis (Relative to the central chunk)
+	 * @param[in,out] y voxel position along Y-axis (Relative to the central chunk)
+	 * @param[in,out] z voxel position along Z-axis (Relative to the central chunk)
+	 *
+	 * @return Target voxel chunk and sets local x/y/z if it is not null.
+	 */
+	Chunk* tryGetVoxelChunk(int16_t& x, int16_t& y, int16_t& z) const noexcept
+	{
+		if (x < -Chunk::length || x > Chunk::length * 2 - 1 ||
+			y < -Chunk::length || y > Chunk::length * 2 - 1 ||
+			z < -Chunk::length || z > Chunk::length * 2 - 1)
+		{
+			return nullptr;
+		}
+
+		auto lx = x + Chunk::length, ly = y + Chunk::length, lz = z + Chunk::length;
+		lx /= Chunk::length; ly /= Chunk::length; lz /= Chunk::length;
+		auto index = posToIndex(lx, ly, lz);
 		--lx; --ly; --lz;
 		lx *= -Chunk::length; ly *= -Chunk::length; lz *= -Chunk::length;
 		x += lx; y += ly; z += lz;
@@ -196,9 +258,9 @@ public:
 	 * @param[in,out] y voxel position along Y-axis (Relative to the central chunk)
 	 * @param[in,out] z voxel position along Z-axis (Relative to the central chunk)
 	 *
-	 * @return Cluster chunk and sets local x/y/z if it not null.
+	 * @return Target voxel chunk and sets local x/y/z if it is not null.
 	 */
-	Chunk* unsafeGetChunk(int16_t& x, int16_t& y, int16_t& z) const noexcept
+	Chunk* unsafeGetVoxelChunk(int16_t& x, int16_t& y, int16_t& z) const noexcept
 	{
 		auto lx = x + Chunk::length, ly = y + Chunk::length, lz = z + Chunk::length;
 		lx /= Chunk::length; ly /= Chunk::length; lz /= Chunk::length;
@@ -216,12 +278,13 @@ public:
 	 * @param x voxel position along X-axis (Relative to the central chunk)
 	 * @param y voxel position along Y-axis (Relative to the central chunk)
 	 * @param z voxel position along Z-axis (Relative to the central chunk)
+	 * @param nullVoxel voxel ID returned if chunk instance is null
 	 *
 	 * @return Voxel at specified 3D position, or null if target chunk is null.
 	 */
 	Voxel getVoxel(int16_t x, int16_t y, int16_t z, Voxel nullVoxel = voxel::null) const noexcept
 	{
-		auto chunk = getChunk(x, y, z);
+		auto chunk = getVoxelChunk(x, y, z);
 		return chunk ? chunk->get(x, y, z) : nullVoxel;
 	}
 	/**
@@ -235,9 +298,46 @@ public:
 	 */
 	void setVoxel(uint16_t x, uint16_t y, uint16_t z, Voxel voxel) noexcept
 	{
-		auto chunk = getChunk(x, y, z);
+		auto chunk = getVoxelChunk(x, y, z);
 		assert(chunk != nullptr);
 		chunk->set(x, y, z, voxel);
+	}
+
+	/**
+	 * @brief Returns voxel at specified 3D position relative to the central chunk.
+	 * 
+	 * @param x voxel position along X-axis (Relative to the central chunk)
+	 * @param y voxel position along Y-axis (Relative to the central chunk)
+	 * @param z voxel position along Z-axis (Relative to the central chunk)
+	 * @param nullVoxel voxel ID returned if chunk instance is null
+	 *
+	 * @return True if specified 3D position is inside array bounds and chunk is not null.
+	 */
+	bool tryGetVoxel(int16_t x, int16_t y, int16_t z, Voxel& voxel) const noexcept
+	{
+		auto chunk = tryGetVoxelChunk(x, y, z);
+		if (!chunk)
+			return false;
+		voxel = chunk->unsafeGet(x, y, z);
+		return true;
+	}
+	/**
+	 * @brief Sets voxel at specified 3D position relative to the central chunk.
+	 *
+	 * @param x voxel position along X-axis
+	 * @param y voxel position along Y-axis
+	 * @param z voxel position along Z-axis
+	 * @param voxel target voxel ID
+	 *
+	 * @return True if specified 3D position is inside array bounds and chunk is not null.
+	 */
+	bool trySetVoxel(uint16_t x, uint16_t y, uint16_t z, Voxel voxel) noexcept
+	{
+		auto chunk = tryGetVoxelChunk(x, y, z);
+		if (!chunk)
+			return false;
+		chunk->unsafeSet(x, y, z, voxel);
+		return true;
 	}
 
 	/**
@@ -247,12 +347,13 @@ public:
 	 * @param x voxel position along X-axis (Relative to the central chunk)
 	 * @param y voxel position along Y-axis (Relative to the central chunk)
 	 * @param z voxel position along Z-axis (Relative to the central chunk)
+	 * @param nullVoxel voxel ID returned if chunk instance is null
 	 *
 	 * @return Voxel at specified 3D position, or null if target chunk is null.
 	 */
 	Voxel unsafeGetVoxel(int16_t x, int16_t y, int16_t z, Voxel nullVoxel = voxel::null) const noexcept
 	{
-		auto chunk = unsafeGetChunk(x, y, z);
+		auto chunk = unsafeGetVoxelChunk(x, y, z);
 		return chunk ? chunk->unsafeGet(x, y, z) : nullVoxel;
 	}
 };
