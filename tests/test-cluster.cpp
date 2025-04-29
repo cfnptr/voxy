@@ -25,10 +25,6 @@ typedef Cluster3D<Chunk, uint8_t> Cluster;
 
 int main()
 {
-	Cluster::Chunk chunks[7] = {};
-
-	Cluster cluster(&chunks[0], &chunks[1], &chunks[2],
-		&chunks[3], &chunks[4], &chunks[5], &chunks[6]);
-	
+	Cluster cluster;
 	return EXIT_SUCCESS;
 }

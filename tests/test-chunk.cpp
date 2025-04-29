@@ -24,7 +24,7 @@ typedef Chunk3D<16, 16, 16, uint8_t> Chunk;
 
 int main()
 {
-	Chunk chunk(voxel::null);
+	Chunk chunk;
 	chunk.set(1, 2, 3, 100);
 
 	if (chunk.get(1, 2, 3) != 100)
