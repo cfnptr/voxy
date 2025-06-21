@@ -105,7 +105,7 @@ protected:
 public:
 	/*******************************************************************************************************************
 	 * @brief Creates a new uninitialized chunk.
-	 * @note Chunk may contain garbage voxels.
+	 * @warning Chunk may contain garbage voxels.
 	 */
 	Chunk3D() = default;
 	/**
