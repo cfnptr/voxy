@@ -101,7 +101,7 @@ public:
 	 */
 	typedef V Voxel;
 protected:
-	Voxel voxels[size] = {};
+	Voxel voxels[size];
 public:
 	/*******************************************************************************************************************
 	 * @brief Creates a new uninitialized chunk.
