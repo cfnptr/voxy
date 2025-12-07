@@ -68,19 +68,13 @@ protected:
 public:
 	/**
 	 * @brief Creates a new chunk 3x3x3 cluster.
-	 * @param chunks target cluster chunk array or null.
+	 * @param chunks target cluster chunk array or null
 	 */
 	Cluster3D(Chunk* chunks[size] = nullptr) noexcept
 	{
 		if (chunks)
-		{
-			for (uint8_t i = 0; i < size; i++)
-				this->chunks[i] = chunks[i];
-		}
-		else
-		{
-			memset(this->chunks, 0, size * sizeof(Chunk*));
-		}
+			memcpy(this->chunks, chunks, size * sizeof(Chunk*));
+		else memset(this->chunks, 0, size * sizeof(Chunk*));
 	}
 
 	/*******************************************************************************************************************
@@ -118,6 +112,11 @@ public:
 	}
 
 	/**
+	 * @brief Central cluster chunk index.
+	 */
+	static constexpr uint8_t centralIndex = posToIndex(1, 1, 1);
+
+	/**
 	 * @brief Are all cluster chunks not null.
 	 */
 	bool isComplete() const noexcept
@@ -133,7 +132,7 @@ public:
 	 */
 	Chunk* getCentralChunk() const noexcept
 	{
-		return chunks[posToIndex(1, 1, 1)];
+		return chunks[centralIndex];
 	}
 
 	/*******************************************************************************************************************
