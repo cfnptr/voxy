@@ -107,12 +107,12 @@ public:
 	 * @brief Creates a new uninitialized chunk.
 	 * @warning Chunk may contain garbage voxels.
 	 */
-	Chunk3D() = default;
+	Chunk3D() noexcept = default;
 	/**
 	 * @brief Creates a new initialized chunk.
 	 * @param voxel target voxel to fill chunk with
 	 */
-	Chunk3D(Voxel voxel) { fill(voxel); }
+	Chunk3D(Voxel voxel) noexcept { fill(voxel); }
 
 	/**
 	 * @brief Returns chunk voxel array.
