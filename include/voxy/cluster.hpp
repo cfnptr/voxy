@@ -124,7 +124,7 @@ public:
 		size_t mask = 0;
 		for (uint8_t i = 0; i < size; i++)
 			mask |= (size_t)this->chunks[i];
-		return mask;
+		return mask ? true : false;
 	}
 
 	/**
