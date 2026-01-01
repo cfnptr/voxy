@@ -1,4 +1,4 @@
-// Copyright 2023-2025 Nikita Fediuchin. All rights reserved.
+// Copyright 2023-2026 Nikita Fediuchin. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -263,4 +263,4 @@ static void shrinkIterator3D(const std::function<void(T, T, T)>& onIter, T size)
 	runCenterIterator3D(onIter, center, positive, isEven);
 }
 
-};
+} // namespace voxy

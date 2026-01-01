@@ -1,6 +1,6 @@
 # Voxy
 
-A library providing API for working with **voxel** structures.
+A [library](https://github.com/cfnptr/voxy) providing API for working with **voxel** structures.
 
 Voxel structures are used to store and manage 3D voxel data. Essentially, it's a three-dimensional grid, 
 where each cell in the grid (voxel) contains information about a small volume of space in a 3D environment. 
@@ -13,7 +13,7 @@ See the [documentation](https://cfnptr.github.io/voxy)
 
 * Windows (10/11)
 * Ubuntu (22.04/24.04)
-* macOS (14/15)
+* macOS (15/26)
 
 This list includes only those systems on which functionality testing is conducted.
 However, you can also compile it under any other Linux distribution or operating system.

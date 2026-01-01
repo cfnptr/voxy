@@ -1,4 +1,4 @@
-// Copyright 2023-2025 Nikita Fediuchin. All rights reserved.
+// Copyright 2023-2026 Nikita Fediuchin. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -256,7 +256,7 @@ public:
 	 * @brief Sets chunk voxel at specified array index if inside array bounds.
 	 *
 	 * @param index target voxel index inside array
-	 * @param target voxel ID
+	 * @param voxel target voxel ID
 	 *
 	 * @return True if voxel index is inside array bounds, otherwise false.
 	 */
@@ -346,13 +346,18 @@ public:
 	 * @brief Copies voxels from specified array part to this chunk.
 	 * @note Voxel array should have bigger or the same size as specified part!
 	 * 
-	 * @param[in] target other voxel array
-	 * @param _sizeX other voxel array part size along X-axis
-	 * @param _sizeY other voxel array part size along Y-axis
-	 * @param _sizeZ other voxel array part size along Z-axis
-	 * @param offsetX voxel array part offset along X-axis
-	 * @param offsetY voxel array part offset along Y-axis
-	 * @param offsetZ voxel array part offset along Z-axis
+	 * @param[in] otherVoxels target other voxel array
+	 * @param countX voxel array part size along X-axis
+	 * @param countY voxel array part size along Y-axis
+	 * @param countZ voxel array part size along Z-axis
+	 * @param otherLength other voxel array length along X-axis
+	 * @param otherLayerSize other voxel array layer size along X * Y
+	 * @param otherOffsetX other voxel array part offset along X-axis
+	 * @param otherOffsetY other voxel array part offset along Y-axis
+	 * @param otherOffsetZ other voxel array part offset along Z-axis
+	 * @param thisOffsetX this voxel array part offset along X-axis
+	 * @param thisOffsetY this voxel array part offset along Y-axis
+	 * @param thisOffsetZ this voxel array part offset along Z-axis
 	 */
 	void copy(const Voxel* otherVoxels, 
 		uint8_t otherLength, uint16_t otherLayerSize, uint8_t countX, uint8_t countY, uint8_t countZ,
@@ -378,4 +383,4 @@ public:
 	}
 };
 
-};
+} // namespace voxy

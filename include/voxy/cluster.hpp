@@ -1,4 +1,4 @@
-// Copyright 2023-2025 Nikita Fediuchin. All rights reserved.
+// Copyright 2023-2026 Nikita Fediuchin. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -308,7 +308,7 @@ public:
 	 * @param x voxel position along X-axis (Relative to the central chunk)
 	 * @param y voxel position along Y-axis (Relative to the central chunk)
 	 * @param z voxel position along Z-axis (Relative to the central chunk)
-	 * @param nullVoxel voxel ID returned if chunk instance is null
+	 * @param[out] voxel target voxel ID on success
 	 *
 	 * @return True if specified 3D position is inside array bounds and chunk is not null.
 	 */
@@ -357,4 +357,4 @@ public:
 	}
 };
 
-};
+} // namespace voxy
