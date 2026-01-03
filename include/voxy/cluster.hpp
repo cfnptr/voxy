@@ -18,6 +18,7 @@
  */
 
 #pragma once
+#include "voxy/voxel.hpp"
 #include "voxy/chunk.hpp"
 
 namespace voxy
@@ -95,7 +96,7 @@ public:
 	 */
 	static constexpr uint8_t posToIndex(uint8_t x, uint8_t y, uint8_t z) noexcept
 	{
-		return voxy::posToIndex(x, y, z, length, layerSize);
+		return z * layerSize + y * length + x;
 	}
 	/**
 	 * @brief Calculates cluster chunk 3D position from the index.
@@ -108,7 +109,10 @@ public:
 	template<typename T /* = uint8_t */>
 	static constexpr void indexToPos(uint8_t index, uint8_t& x, uint8_t& y, uint8_t& z) noexcept
 	{
-		voxy::indexToPos(index, length, layerSize, x, y, z);
+		z = (T)(index / layerSize);
+		index %= layerSize;
+		y = (T)(index / length);
+		x = (T)(index % length);
 	}
 
 	/**
@@ -210,7 +214,7 @@ public:
 	 *
 	 * @return Target voxel chunk and sets local x/y/z if it is not null.
 	 */
-	Chunk* getVoxelChunk(int16_t& x, int16_t& y, int16_t& z) const noexcept
+	Chunk* getVoxelChunk(int32_t& x, int32_t& y, int32_t& z) const noexcept
 	{
 		assert(x >= -Chunk::length && x <= Chunk::length * 2 - 1);
 		assert(y >= -Chunk::length && y <= Chunk::length * 2 - 1);
@@ -232,7 +236,7 @@ public:
 	 *
 	 * @return Target voxel chunk and sets local x/y/z if it is not null.
 	 */
-	Chunk* tryGetVoxelChunk(int16_t& x, int16_t& y, int16_t& z) const noexcept
+	Chunk* tryGetVoxelChunk(int32_t& x, int32_t& y, int32_t& z) const noexcept
 	{
 		if (x < -Chunk::length || x > Chunk::length * 2 - 1 ||
 			y < -Chunk::length || y > Chunk::length * 2 - 1 ||
@@ -259,7 +263,7 @@ public:
 	 *
 	 * @return Target voxel chunk and sets local x/y/z if it is not null.
 	 */
-	Chunk* unsafeGetVoxelChunk(int16_t& x, int16_t& y, int16_t& z) const noexcept
+	Chunk* unsafeGetVoxelChunk(int32_t& x, int32_t& y, int32_t& z) const noexcept
 	{
 		auto lx = x + Chunk::length, ly = y + Chunk::length, lz = z + Chunk::length;
 		lx /= Chunk::length; ly /= Chunk::length; lz /= Chunk::length;
@@ -281,7 +285,7 @@ public:
 	 *
 	 * @return Voxel at specified 3D position, or null if target chunk is null.
 	 */
-	Voxel getVoxel(int16_t x, int16_t y, int16_t z, Voxel nullVoxel = voxel::null) const noexcept
+	Voxel getVoxel(int32_t x, int32_t y, int32_t z, Voxel nullVoxel = voxel::null) const noexcept
 	{
 		auto chunk = getVoxelChunk(x, y, z);
 		return chunk ? chunk->get(x, y, z) : nullVoxel;
@@ -295,7 +299,7 @@ public:
 	 * @param z voxel position along Z-axis
 	 * @param voxel target voxel ID
 	 */
-	void setVoxel(uint16_t x, uint16_t y, uint16_t z, Voxel voxel) noexcept
+	void setVoxel(int32_t x, int32_t y, int32_t z, Voxel voxel) noexcept
 	{
 		auto chunk = getVoxelChunk(x, y, z);
 		assert(chunk != nullptr);
@@ -312,7 +316,7 @@ public:
 	 *
 	 * @return True if specified 3D position is inside array bounds and chunk is not null.
 	 */
-	bool tryGetVoxel(int16_t x, int16_t y, int16_t z, Voxel& voxel) const noexcept
+	bool tryGetVoxel(int32_t x, int32_t y, int32_t z, Voxel& voxel) const noexcept
 	{
 		auto chunk = tryGetVoxelChunk(x, y, z);
 		if (!chunk)
@@ -330,7 +334,7 @@ public:
 	 *
 	 * @return True if specified 3D position is inside array bounds and chunk is not null.
 	 */
-	bool trySetVoxel(uint16_t x, uint16_t y, uint16_t z, Voxel voxel) noexcept
+	bool trySetVoxel(int32_t x, int32_t y, int32_t z, Voxel voxel) noexcept
 	{
 		auto chunk = tryGetVoxelChunk(x, y, z);
 		if (!chunk)
@@ -350,7 +354,7 @@ public:
 	 *
 	 * @return Voxel at specified 3D position, or null if target chunk is null.
 	 */
-	Voxel unsafeGetVoxel(int16_t x, int16_t y, int16_t z, Voxel nullVoxel = voxel::null) const noexcept
+	Voxel unsafeGetVoxel(int32_t x, int32_t y, int32_t z, Voxel nullVoxel = voxel::null) const noexcept
 	{
 		auto chunk = unsafeGetVoxelChunk(x, y, z);
 		return chunk ? chunk->unsafeGet(x, y, z) : nullVoxel;

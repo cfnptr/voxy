@@ -18,10 +18,8 @@
  */
 
 #pragma once
-#include <algorithm>
 #include <functional>
 #include <cassert>
-#include <cstdint>
 
 namespace voxy
 {
