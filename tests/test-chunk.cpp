@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "voxy/voxel.hpp"
 #include "voxy/chunk.hpp"
 
 #include <cstdlib>
