@@ -20,7 +20,7 @@
 using namespace std;
 using namespace voxy;
 
-typedef Chunk3Z<, 16, uint8_t> Chunk;
+typedef Chunk3Z<16, uint8_t> Chunk;
 typedef Cluster3D<Chunk, uint8_t> Cluster;
 
 int main()
